@@ -7,17 +7,11 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/database/database_service.dart';
 
-/// Service responsible for generating and saving the CSV export.
-/// Uses exact CSV column format from the assignment specification.
-/// Saves to the Downloads folder via direct file write (Android API 29+)
-/// or external storage (Android < 29) using permission_handler.
 class CsvExportService {
   final DatabaseService _db;
 
   CsvExportService(this._db);
 
-  /// Exports all feedback records to a CSV file saved in the Downloads folder.
-  /// Returns a status message with the save path.
   Future<String> exportToCSV() async {
     final feedbackList = await _db.getAllFeedback();
 
@@ -26,7 +20,6 @@ class CsvExportService {
     }
 
     final rows = <List<dynamic>>[
-      // Header row — exact columns from assignment specification
       [
         'Device Owner',
         'User Details',
@@ -50,7 +43,6 @@ class CsvExportService {
   }
 
   Future<String> _saveToDownloads(String csvContent) async {
-    // Request storage permission on Android < 33
     if (Platform.isAndroid) {
       final status = await Permission.manageExternalStorage.request();
       if (!status.isGranted) {

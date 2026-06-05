@@ -1,5 +1,3 @@
-// lib/features/media_collection/screens/media_collection_screen.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,10 +11,6 @@ import '../bloc/media_bloc.dart';
 import '../bloc/media_event.dart';
 import '../bloc/media_state.dart';
 
-/// Screen 4 — Media Collection
-/// Attach screenshots, images, or videos via image_picker.
-/// Preview thumbnails with individual remove buttons.
-/// On Submit: saves media URIs to DB + navigates to Thank You.
 class MediaCollectionScreen extends StatefulWidget {
   const MediaCollectionScreen({super.key});
 
@@ -119,7 +113,6 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
   Future<void> _onSubmit(BuildContext context) async {
     setState(() => _isSaving = true);
 
-    // Capture all context-dependent refs BEFORE the async gap
     final mediaBloc = context.read<MediaBloc>();
     final feedbackCubit = context.read<FeedbackCubit>();
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -128,17 +121,11 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
     try {
       final mediaState = mediaBloc.state;
 
-      // Update media paths in cubit
       feedbackCubit.setMediaPaths(mediaState.filePaths);
-
-      // Build final FeedbackModel and insert into DB
       final feedback = feedbackCubit.state.toFeedbackModel();
       await getIt<DatabaseService>().insertFeedback(feedback);
 
-      // Reset media BLoC for next entry
       if (mounted) mediaBloc.add(const MediaReset());
-
-      // Navigate to Thank You screen
       if (mounted) router.go(AppConstants.thankYouRoute);
     } catch (e) {
       if (mounted) setState(() => _isSaving = false);
