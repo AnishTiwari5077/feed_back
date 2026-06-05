@@ -288,7 +288,7 @@ CREATE TABLE feedback (
 - **sqflite over Hive** — the assignment specified using a "local SQL database".
 - **get_it for DI** — the assignment specifically mentioned using `get_it`.
 - **permission_handler + direct file write** — provides a reliable way to save to the Downloads folder (Scoped Storage) without complex media store APIs that can fail on newer Android versions.
-- **biometricOnly: false** — allows password/PIN fallback, fulfilling the "fingerprint/password authentication" requirement for devices without biometric hardware.
+- **Biometric Authentication** — Implemented biometric (fingerprint/password) authentication using the `local_auth` package to secure the CSV export as required.
 - **Features-first folder structure** — scales well and keeps each screen's UI and BLoC logic completely self-contained.
 
 ---
