@@ -60,7 +60,7 @@ class DatabaseService {
     return maps.map((m) => FeedbackModel.fromMap(m)).toList();
   }
 
-  /// Delete a specific feedback entry by id.
+  /// Delete a specific feedback   entry by id.
   Future<int> deleteFeedback(int id) async {
     final db = await database;
     return db.delete(
