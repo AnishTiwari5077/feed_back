@@ -8,11 +8,11 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../features/auth/bloc/auth_bloc.dart';
 import '../../../features/auth/bloc/auth_event.dart';
+import '../../../features/auth/bloc/auth_state.dart';
 import '../../../features/feedback_cubit/feedback_cubit.dart';
 import '../bloc/user_details_bloc.dart';
 import '../bloc/user_details_event.dart';
 import '../bloc/user_details_state.dart';
-
 
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
@@ -59,9 +59,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
             '(Android ${androidInfo.version.release})';
       });
     } catch (_) {
-      setState(() {
-        _deviceModel = 'Unknown Device';
-      });
+      setState(() => _deviceModel = 'Unknown Device');
     }
   }
 
@@ -77,6 +75,19 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     super.dispose();
   }
 
+  // ── helpers ──────────────────────────────────────────────────
+  String _initials(String? displayName) {
+    if (displayName == null || displayName.trim().isEmpty) return 'U';
+    return displayName
+        .trim()
+        .split(' ')
+        .where((e) => e.isNotEmpty)
+        .map((e) => e[0].toUpperCase())
+        .take(2)
+        .join();
+  }
+
+  // ── build ─────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserDetailsBloc, UserDetailsState>(
@@ -118,34 +129,70 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     );
   }
 
+  // ── AppBar ────────────────────────────────────────────────────
   AppBar _buildAppBar(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+    final user = authState is AuthAuthenticated ? authState.user : null;
+
     return AppBar(
       backgroundColor: AppTheme.backgroundDark,
       elevation: 0,
       automaticallyImplyLeading: false,
-      actions: [
-        TextButton.icon(
-          onPressed: () {
-            context.read<AuthBloc>().add(const SignOutRequested());
-            context.go(AppConstants.loginRoute);
-          },
-          icon: const Icon(
-            Icons.logout_rounded,
-            size: 16,
-            color: AppTheme.textSecondary,
+      // ── left side: avatar + name/email ──
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Avatar — photo if available, else initials
+          CircleAvatar(
+            radius: 16,
+            backgroundImage:
+                user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
+            backgroundColor: AppTheme.primaryColor,
+            child: user?.photoURL == null
+                ? Text(
+                    _initials(user?.displayName),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  )
+                : null,
           ),
-          label: const Text(
-            'Sign out',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  user?.displayName ?? 'User',
+                  style: const TextStyle(
+                    color: AppTheme.textPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  user?.email ?? '',
+                  style: const TextStyle(
+                    color: AppTheme.textSecondary,
+                    fontSize: 11,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
-          style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-          ),
-        ),
+        ],
+      ),
+      // ── right side: sign-out + step indicator ──
+      actions: [
+        _SignOutButton(context: context),
+        const SizedBox(width: 12),
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: _buildStepIndicator(currentStep: 1),
@@ -154,6 +201,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     );
   }
 
+  // ── Header ────────────────────────────────────────────────────
   Widget _buildHeader() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,13 +245,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     );
   }
 
+  // ── Device info card ──────────────────────────────────────────
   Widget _buildDeviceInfoCard() {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppTheme.accentColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.accentColor.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: AppTheme.accentColor.withValues(alpha: 0.2),
+        ),
       ),
       child: Row(
         children: [
@@ -239,6 +290,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     );
   }
 
+  // ── Form ──────────────────────────────────────────────────────
   Widget _buildForm() {
     return BlocBuilder<UserDetailsBloc, UserDetailsState>(
       builder: (context, state) {
@@ -292,6 +344,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     );
   }
 
+  // ── Next button ───────────────────────────────────────────────
   Widget _buildNextButton() {
     return BlocBuilder<UserDetailsBloc, UserDetailsState>(
       builder: (context, state) {
@@ -310,9 +363,12 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
+              disabledBackgroundColor:
+                  AppTheme.primaryColor.withValues(alpha: 0.4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
+              elevation: 0,
             ),
             child: isLoading
                 ? const SizedBox(
@@ -345,6 +401,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     );
   }
 
+  // ── Step indicator ────────────────────────────────────────────
   Widget _buildStepIndicator({required int currentStep}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -368,7 +425,172 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
   }
 }
 
+// ════════════════════════════════════════════════════════════════
+// SIGN OUT BUTTON — professional with confirmation dialog
+// ════════════════════════════════════════════════════════════════
+class _SignOutButton extends StatelessWidget {
+  final BuildContext context;
+  const _SignOutButton({required this.context});
 
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: () => _showSignOutDialog(context),
+      icon: const Icon(
+        Icons.logout_rounded,
+        size: 15,
+        color: Color(0xFFF87171),
+      ),
+      label: const Text(
+        'Sign out',
+        style: TextStyle(
+          color: Color(0xFFF87171),
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      style: TextButton.styleFrom(
+        backgroundColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
+        side: const BorderSide(
+          color: Color(0xFFEF4444),
+          width: 0.5,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 8,
+        ),
+      ),
+    );
+  }
+
+  void _showSignOutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.backgroundDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Colors.white.withValues(alpha: 0.08),
+            width: 0.5,
+          ),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Icon circle ──
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                border: Border.all(
+                  color: const Color(0xFFEF4444).withValues(alpha: 0.25),
+                  width: 0.5,
+                ),
+              ),
+              child: const Icon(
+                Icons.logout_rounded,
+                color: Color(0xFFF87171),
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 16),
+            // ── Title ──
+            const Text(
+              'Sign out?',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            // ── Body ──
+            const Text(
+              'You will be redirected to the login screen. '
+              'Any unsaved progress will be lost.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: AppTheme.textSecondary,
+                height: 1.55,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Row(
+            children: [
+              // ── Cancel ──
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      width: 0.5,
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: AppTheme.textSecondary,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              // ── Confirm sign out ──
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    context.read<AuthBloc>().add(const SignOutRequested());
+                    context.go(AppConstants.loginRoute);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEF4444),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Sign out',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// ANIMATED FORM FIELD
+// ════════════════════════════════════════════════════════════════
 class _AnimatedFormField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -404,9 +626,17 @@ class _AnimatedFormFieldState extends State<_AnimatedFormField> {
   @override
   void initState() {
     super.initState();
-    widget.focusNode.addListener(() {
-      setState(() => _isFocused = widget.focusNode.hasFocus);
-    });
+    widget.focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() => _isFocused = widget.focusNode.hasFocus);
+  }
+
+  @override
+  void dispose() {
+    widget.focusNode.removeListener(_onFocusChange);
+    super.dispose();
   }
 
   @override
@@ -432,7 +662,10 @@ class _AnimatedFormFieldState extends State<_AnimatedFormField> {
         textInputAction: widget.textInputAction,
         onChanged: widget.onChanged,
         onFieldSubmitted: widget.onFieldSubmitted,
-        style: const TextStyle(color: AppTheme.textPrimary, fontSize: 15),
+        style: const TextStyle(
+          color: AppTheme.textPrimary,
+          fontSize: 15,
+        ),
         decoration: InputDecoration(
           labelText: widget.label,
           hintText: widget.hint,
