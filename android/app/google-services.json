@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "890275161522",
+    "project_id": "fir-c8bc9",
+    "storage_bucket": "fir-c8bc9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890275161522:android:0874ed3053ae1c1b62b0ab",
+        "android_client_info": {
+          "package_name": "com.example.feedback_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnNfkFboSG9gQhaLk-i5nqaMhHgsHLX9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890275161522:android:0348833b208f7b5962b0ab",
+        "android_client_info": {
+          "package_name": "com.example.grocery_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnNfkFboSG9gQhaLk-i5nqaMhHgsHLX9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
