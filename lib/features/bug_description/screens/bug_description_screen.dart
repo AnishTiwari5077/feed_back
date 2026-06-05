@@ -1,4 +1,4 @@
-// lib/features/bug_description/screens/bug_description_screen.dart
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +10,7 @@ import '../bloc/bug_bloc.dart';
 import '../bloc/bug_event.dart';
 import '../bloc/bug_state.dart';
 
-/// Screen 3 — Bug Description
-/// Fields: Bug/Issue title + detailed multiline description with character counter.
+
 class BugDescriptionScreen extends StatefulWidget {
   const BugDescriptionScreen({super.key});
 
@@ -58,7 +57,6 @@ class _BugDescriptionScreenState extends State<BugDescriptionScreen>
     return BlocListener<BugBloc, BugState>(
       listener: (context, state) {
         if (state.status == BugStatus.success) {
-          // Save to FeedbackCubit
           context.read<FeedbackCubit>().setBugDetails(
                 bugIssue: state.title,
                 description: state.description,
@@ -158,7 +156,6 @@ class _BugDescriptionScreenState extends State<BugDescriptionScreen>
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Bug/Issue Title
             _buildFocusableField(
               controller: _titleController,
               focusNode: _titleFocus,
@@ -173,7 +170,6 @@ class _BugDescriptionScreenState extends State<BugDescriptionScreen>
               onFieldSubmitted: (_) => _descFocus.requestFocus(),
             ),
             const SizedBox(height: 20),
-            // Detailed Description
             _buildFocusableField(
               controller: _descController,
               focusNode: _descFocus,
@@ -188,7 +184,6 @@ class _BugDescriptionScreenState extends State<BugDescriptionScreen>
                   context.read<BugBloc>().add(BugDescriptionChanged(v)),
               textInputAction: TextInputAction.newline,
             ),
-            // Character counter
             const SizedBox(height: 6),
             Align(
               alignment: Alignment.centerRight,
