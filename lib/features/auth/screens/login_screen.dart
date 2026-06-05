@@ -85,40 +85,47 @@ class _LoginScreenState extends State<LoginScreen>
       child: Scaffold(
         backgroundColor: AppTheme.backgroundDark,
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 60),
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: _buildLogo(),
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 60),
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: _buildLogo(),
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: _buildTagline(),
+                        ),
+                      ),
+                      const Spacer(),
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: _buildSignInButton(context),
+                      ),
+                      const SizedBox(height: 40),
+                      FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: _buildFooter(),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 48),
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: _buildTagline(),
-                  ),
-                ),
-                const Spacer(),
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: _buildSignInButton(context),
-                ),
-                const SizedBox(height: 40),
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: _buildFooter(),
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
