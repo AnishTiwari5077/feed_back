@@ -1,0 +1,67 @@
+name: feedback_app
+description: "A User Feedback Collection Application using Flutter."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State Management — BLoC
+  flutter_bloc: ^8.1.6
+  bloc: ^8.1.4
+
+  # Firebase Auth + Google Sign-In
+  firebase_core: ^3.8.0
+  firebase_auth: ^5.3.4
+  google_sign_in: ^6.2.2
+
+  # Local SQL Database
+  sqflite: ^2.4.0
+  path: ^1.9.0
+
+  # Dependency Injection
+  get_it: ^8.0.3
+
+  # Media files — images/videos
+  image_picker: ^1.1.2
+
+  # Storage permissions (replaces media_store_plus which has KGP build issue)
+  permission_handler: ^11.3.1
+
+  # CSV file generation
+  csv: ^6.0.0
+
+  # Biometric/password authentication
+  local_auth: ^2.3.0
+
+  # Smooth navigation & transitions
+  go_router: ^14.6.2
+
+  # Animations
+  animations: ^2.0.11
+
+  # Device info
+  device_info_plus: ^13.1.0
+
+  # Path provider for temp files
+  path_provider: ^2.1.5
+
+  # Equatable for BLoC states
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/animations/
