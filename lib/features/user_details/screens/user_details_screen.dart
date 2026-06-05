@@ -13,9 +13,7 @@ import '../bloc/user_details_bloc.dart';
 import '../bloc/user_details_event.dart';
 import '../bloc/user_details_state.dart';
 
-/// Screen 2 — User Details
-/// Collects: Full Name, Email, Contact of the person submitting feedback.
-/// Device info is auto-detected via device_info_plus.
+
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
 
@@ -84,7 +82,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     return BlocListener<UserDetailsBloc, UserDetailsState>(
       listener: (context, state) {
         if (state.status == UserDetailsStatus.success) {
-          // Save to FeedbackCubit
           context.read<FeedbackCubit>().setUserDetails(
                 name: state.name,
                 email: state.email,
@@ -125,16 +122,30 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
     return AppBar(
       backgroundColor: AppTheme.backgroundDark,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.logout_rounded, color: AppTheme.textSecondary),
-        tooltip: 'Sign Out',
-        onPressed: () {
-          context.read<AuthBloc>().add(const SignOutRequested());
-          context.go(AppConstants.loginRoute);
-        },
-      ),
+      automaticallyImplyLeading: false,
       actions: [
-        // Step indicator
+        TextButton.icon(
+          onPressed: () {
+            context.read<AuthBloc>().add(const SignOutRequested());
+            context.go(AppConstants.loginRoute);
+          },
+          icon: const Icon(
+            Icons.logout_rounded,
+            size: 16,
+            color: AppTheme.textSecondary,
+          ),
+          label: const Text(
+            'Sign out',
+            style: TextStyle(
+              color: AppTheme.textSecondary,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: _buildStepIndicator(currentStep: 1),
@@ -357,7 +368,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen>
   }
 }
 
-/// Animated form field with focus-driven border animation.
+
 class _AnimatedFormField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;

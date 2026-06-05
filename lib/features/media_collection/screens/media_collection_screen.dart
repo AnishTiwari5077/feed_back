@@ -90,9 +90,7 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
                         .read<MediaBloc>()
                         .add(const MediaPickVideoFromCamera());
                   } else {
-                    context
-                        .read<MediaBloc>()
-                        .add(const MediaPickFromCamera());
+                    context.read<MediaBloc>().add(const MediaPickFromCamera());
                   }
                 },
               ),
@@ -107,9 +105,7 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
                         .read<MediaBloc>()
                         .add(const MediaPickVideoFromGallery());
                   } else {
-                    context
-                        .read<MediaBloc>()
-                        .add(const MediaPickFromGallery());
+                    context.read<MediaBloc>().add(const MediaPickFromGallery());
                   }
                 },
               ),
@@ -155,13 +151,11 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<MediaBloc, MediaState>(
       listener: (context, state) {
-        if (state.status == MediaStatus.failure &&
-            state.errorMessage != null) {
+        if (state.status == MediaStatus.failure && state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
@@ -501,8 +495,7 @@ class _SourceOption extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppTheme.textHint),
+            const Icon(Icons.chevron_right_rounded, color: AppTheme.textHint),
           ],
         ),
       ),
@@ -569,8 +562,7 @@ class _MediaThumbnail extends StatelessWidget {
             bottom: 4,
             left: 4,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(4),

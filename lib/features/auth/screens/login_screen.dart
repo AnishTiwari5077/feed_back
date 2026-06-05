@@ -1,4 +1,3 @@
-// lib/features/auth/screens/login_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +9,6 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
-/// Screen 1 — Google Login
-/// Device owner authenticates via Google Sign-In.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -45,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen>
     ));
     _animationController.forward();
 
-    // Check if already authenticated
     context.read<AuthBloc>().add(const CheckAuthStatus());
   }
 
@@ -60,7 +56,6 @@ class _LoginScreenState extends State<LoginScreen>
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          // Store device owner email in FeedbackCubit
           context.read<FeedbackCubit>().setDeviceOwner(
                 state.user.email ?? state.user.uid,
               );
@@ -96,7 +91,6 @@ class _LoginScreenState extends State<LoginScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 60),
-                // Animated App Logo
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: SlideTransition(
@@ -105,7 +99,6 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
                 const SizedBox(height: 48),
-                // Animated tagline
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: SlideTransition(
@@ -114,13 +107,11 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
                 const Spacer(),
-                // Sign-in button
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: _buildSignInButton(context),
                 ),
                 const SizedBox(height: 40),
-                // Footer
                 FadeTransition(
                   opacity: _fadeAnimation,
                   child: _buildFooter(),
@@ -274,7 +265,6 @@ class _LoginScreenState extends State<LoginScreen>
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Google Logo
                           Container(
                             width: 24,
                             height: 24,
@@ -317,7 +307,6 @@ class _LoginScreenState extends State<LoginScreen>
   }
 }
 
-/// Custom Google 'G' icon painted with correct brand colors.
 class _GoogleIcon extends StatelessWidget {
   const _GoogleIcon();
 
@@ -337,36 +326,30 @@ class _GoogleLogoPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    // Blue
     paint.color = const Color(0xFF4285F4);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -0.35, 1.58, true, paint,
     );
-    // Red
     paint.color = const Color(0xFFEA4335);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       1.23, 1.58, true, paint,
     );
-    // Yellow
     paint.color = const Color(0xFFFBBC05);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       2.81, 1.58, true, paint,
     );
-    // Green
     paint.color = const Color(0xFF34A853);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       4.39, 1.58, true, paint,
     );
 
-    // White center hole
     paint.color = Colors.white;
     canvas.drawCircle(center, radius * 0.55, paint);
 
-    // White 'G' bar (horizontal)
     paint.color = const Color(0xFF4285F4);
     canvas.drawRect(
       Rect.fromLTWH(center.dx, center.dy - radius * 0.18,

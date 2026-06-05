@@ -1,4 +1,4 @@
-// lib/features/thank_you/screens/thank_you_screen.dart
+
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -15,11 +15,7 @@ import '../../../features/user_details/bloc/user_details_event.dart';
 import '../../../features/bug_description/bloc/bug_bloc.dart';
 import '../../../features/bug_description/bloc/bug_event.dart';
 
-/// Screen 5 — Thank You
-/// Shows animated success checkmark.
-/// Auto-redirects back to Screen 2 (User Details) after [AppConstants.thankYouRedirectDelay]
-/// seconds to accept another entry — exactly as specified in IMPLEMENTATION.md.
-/// Countdown is CANCELLED if user taps Export or Add Another Entry buttons.
+
 class ThankYouScreen extends StatefulWidget {
   const ThankYouScreen({super.key});
 
@@ -83,13 +79,11 @@ class _ThankYouScreenState extends State<ThankYouScreen>
       curve: const Interval(0.2, 1.0, curve: Curves.easeOutCubic),
     ));
 
-    // Start animations sequentially
     _checkController.forward().then((_) {
       _pulseController.repeat(reverse: true);
       _contentController.forward();
     });
 
-    // Start countdown — fires every 1 second
     _startCountdown();
   }
 
@@ -107,7 +101,6 @@ class _ThankYouScreenState extends State<ThankYouScreen>
     });
   }
 
-  /// Cancel the auto-redirect countdown (called when user taps a button).
   void _cancelCountdown() {
     _countdownTimer?.cancel();
     if (!mounted) return;
@@ -117,11 +110,9 @@ class _ThankYouScreenState extends State<ThankYouScreen>
   void _navigateToUserDetails() {
     _countdownTimer?.cancel();
     if (!mounted) return;
-    // Reset all form BLoCs for next entry
     context.read<FeedbackCubit>().reset();
     context.read<UserDetailsBloc>().add(const UserDetailsReset());
     context.read<BugBloc>().add(const BugReset());
-    // Navigate back to Screen 2 to accept another entry
     context.go(AppConstants.userDetailsRoute);
   }
 
@@ -189,7 +180,6 @@ class _ThankYouScreenState extends State<ThankYouScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Animated success checkmark
                 ScaleTransition(
                   scale: _checkScale,
                   child: FadeTransition(
@@ -201,7 +191,6 @@ class _ThankYouScreenState extends State<ThankYouScreen>
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Content (fades in after checkmark)
                 FadeTransition(
                   opacity: _contentFade,
                   child: SlideTransition(
@@ -231,16 +220,13 @@ class _ThankYouScreenState extends State<ThankYouScreen>
                         ),
                         const SizedBox(height: 32),
 
-                        // Countdown OR cancelled indicator
                         _buildCountdownIndicator(),
 
                         const SizedBox(height: 28),
 
-                        // Export CSV button — cancels countdown when tapped
                         _buildExportButton(context),
                         const SizedBox(height: 14),
 
-                        // Add another entry now — cancels countdown and navigates immediately
                         TextButton.icon(
                           onPressed: () {
                             _cancelCountdown();
@@ -302,7 +288,6 @@ class _ThankYouScreenState extends State<ThankYouScreen>
 
   Widget _buildCountdownIndicator() {
     if (_countdownCancelled) {
-      // Show a persistent indicator that the redirect was cancelled
       return Container(
         padding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -360,7 +345,6 @@ class _ThankYouScreenState extends State<ThankYouScreen>
             ),
           ),
           const SizedBox(width: 10),
-          // Tap to cancel redirect
           GestureDetector(
             onTap: _cancelCountdown,
             child: const Icon(
@@ -386,7 +370,6 @@ class _ThankYouScreenState extends State<ThankYouScreen>
             onPressed: isLoading
                 ? null
                 : () {
-                    // Cancel the auto-redirect so user can wait for export result
                     _cancelCountdown();
                     context.read<ExportBloc>().add(const ExportCsvRequested());
                   },
