@@ -20,6 +20,8 @@
 - [Database Schema](#database-schema)
 - [Screenshots](#screenshots)
 - [Screens](#screens)
+- [Design Choices](#design-choices)
+- [Challenges & Solutions](#challenges--solutions)
 - [Potential Improvements](#potential-improvements)
 
 ---
@@ -233,7 +235,7 @@ CREATE TABLE feedback (
 
 ## Screenshots
 
-> Save your screenshots in the `screenshots/` folder at the project root using the filenames below.
+> Save your screenshots in the `screenshots/` folder using the filenames below, then commit them.
 
 ### App Screens
 
@@ -250,20 +252,21 @@ CREATE TABLE feedback (
     <td><img src="screenshots/03_bug_description.png" width="200"/></td>
     <td><img src="screenshots/04_media_collection.png" width="200"/></td>
   </tr>
-</table>
-
-### CSV Export & Thank You
-
-<table>
   <tr>
-    <td align="center"><b>CSV Export (Google Sheets / Excel)</b></td>
     <td align="center"><b>5 · Thank You</b></td>
+    <td align="center"><b>6 · Sign Out Dialog</b></td>
+    <td align="center"><b>7 · Extra / Other</b></td>
+    <td align="center"><b>CSV Export Output</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/05_csv_export.png" width="400"/></td>
-    <td><img src="screenshots/06_thank_you.png" width="200"/></td>
+    <td><img src="screenshots/05_thank_you.png" width="200"/></td>
+    <td><img src="screenshots/06_signout_dialog.png" width="200"/></td>
+    <td><img src="screenshots/07_extra.png" width="200"/></td>
+    <td><img src="screenshots/08_csv_export.png" width="200"/></td>
   </tr>
 </table>
+
+> **CSV screenshot tip:** Export from the app → open `feedback_export.csv` from Downloads in Google Sheets → screenshot the spreadsheet showing all column headers.
 
 ---
 
@@ -276,6 +279,31 @@ CREATE TABLE feedback (
 | 3 | **Bug Description** | Issue title + multiline description with character counter |
 | 4 | **Media Collection** | Pick from camera or gallery; thumbnail grid with remove; optional |
 | 5 | **Thank You** | Animated checkmark; 5-second countdown with cancel; CSV export button |
+
+---
+
+## Design Choices
+
+- **BLoC over Riverpod/Provider** — the assignment specifically required `flutter_bloc` for state management.
+- **sqflite over Hive** — the assignment specified using a "local SQL database".
+- **get_it for DI** — the assignment specifically mentioned using `get_it`.
+- **permission_handler + direct file write** — provides a reliable way to save to the Downloads folder (Scoped Storage) without complex media store APIs that can fail on newer Android versions.
+- **biometricOnly: false** — allows password/PIN fallback, fulfilling the "fingerprint/password authentication" requirement for devices without biometric hardware.
+- **Features-first folder structure** — scales well and keeps each screen's UI and BLoC logic completely self-contained.
+
+---
+
+## Challenges & Solutions
+
+| Challenge | Solution |
+|---|---|
+| BLoC state shared across 5 screens | `FeedbackCubit` accumulates form data across all screens; committed to SQLite only on final Submit (Screen 4) |
+| Scoped storage varies by Android API | `permission_handler` + direct `File` write to `/storage/emulated/0/Download` handles API 29+ reliably |
+| Biometric not available on all devices | `biometricOnly: false` in `local_auth` allows PIN/password fallback automatically |
+| CSV special characters (commas, newlines) | `ListToCsvConverter` from the `csv` package handles all escaping and quoting |
+| Auto-redirect from Thank You → Screen 2 | `Timer.periodic` with a live countdown; cancelled if user taps Export or Add Entry |
+| Context-dependent calls across async gaps | All `context.read<>()` refs captured before `await` to prevent use-after-dispose errors |
+| RenderFlex overflow on small screens | Wrapped login body in `CustomScrollView` + `SliverFillRemaining` to handle tight viewports |
 
 ---
 
