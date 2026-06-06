@@ -265,20 +265,12 @@ CREATE TABLE feedback (
     <td><img src="screenshots/08_csv_export.png" width="200"/></td>
   </tr>
   <tr>
-    <td align="center"><b>9 · Additional</b></td>
-    <td align="center"></td>
-    <td align="center"></td>
-    <td align="center"></td>
+    <td align="center" colspan="4"><b>9 · Additional</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/09_additional.jpeg" width="200"/></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td align="center" colspan="4"><img src="screenshots/09_additional.jpeg" width="200"/></td>
   </tr>
 </table>
-
-> **CSV screenshot tip:** Export from the app → open `feedback_export.csv` from Downloads in Google Sheets → screenshot the spreadsheet showing all column headers.
 
 ---
 
