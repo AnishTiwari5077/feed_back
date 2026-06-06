@@ -121,10 +121,16 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
     try {
       final mediaState = mediaBloc.state;
 
-      feedbackCubit.setMediaPaths(mediaState.filePaths);
+      // Store filename only to avoid cache invalidation issues
+      final fileNames = mediaState.filePaths
+          .map((path) => path.split('/').last)
+          .toList();
+
+      feedbackCubit.setMediaPaths(fileNames);
       final feedback = feedbackCubit.state.toFeedbackModel();
       await getIt<DatabaseService>().insertFeedback(feedback);
 
+      if (mounted) setState(() => _isSaving = false);
       if (mounted) mediaBloc.add(const MediaReset());
       if (mounted) router.go(AppConstants.thankYouRoute);
     } catch (e) {
@@ -271,6 +277,15 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
   Widget _buildMediaGrid(BuildContext context) {
     return BlocBuilder<MediaBloc, MediaState>(
       builder: (context, state) {
+        if (state.status == MediaStatus.loading) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32),
+              child: CircularProgressIndicator(color: AppTheme.primaryColor),
+            ),
+          );
+        }
+
         if (state.files.isEmpty) {
           return Center(
             child: Padding(
@@ -292,15 +307,6 @@ class _MediaCollectionScreenState extends State<MediaCollectionScreen>
                   ),
                 ],
               ),
-            ),
-          );
-        }
-
-        if (state.status == MediaStatus.loading) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(32),
-              child: CircularProgressIndicator(color: AppTheme.primaryColor),
             ),
           );
         }

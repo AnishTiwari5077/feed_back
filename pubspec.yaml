@@ -55,6 +55,7 @@ dependencies:
 
   # Equatable for BLoC states
   equatable: ^2.0.5
+  media_store_plus: ^0.1.3
 
 dev_dependencies:
   flutter_test:
@@ -63,5 +64,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/animations/
