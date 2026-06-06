@@ -44,7 +44,7 @@ class CsvExportService {
 
       // Column 5 — Description + readable media filenames
       final mediaReadable = _formatMediaLinks(f.mediaLinks);
-      final descAndMedia  = _sanitize(
+      final descAndMedia = _sanitize(
         '${f.description}\nMedia: $mediaReadable'
         '\nSubmitted: ${_formatDate(f.createdAt)}',
       );
@@ -56,9 +56,8 @@ class CsvExportService {
     }
 
     // ── Save to temp file ──
-    final tempDir  = await getTemporaryDirectory();
-    final fileName =
-        'feedback_export_${_formatDateForFile()}.csv';
+    final tempDir = await getTemporaryDirectory();
+    final fileName = 'feedback_export_${_formatDateForFile()}.csv';
     final tempFile = File('${tempDir.path}/$fileName');
 
     // UTF-8 BOM — forces Excel to open with correct encoding
@@ -106,8 +105,8 @@ class CsvExportService {
     try {
       final dt = DateTime.parse(isoDate);
       return '${dt.day}/${dt.month}/${dt.year} '
-             '${dt.hour.toString().padLeft(2, '0')}:'
-             '${dt.minute.toString().padLeft(2, '0')}';
+          '${dt.hour.toString().padLeft(2, '0')}:'
+          '${dt.minute.toString().padLeft(2, '0')}';
     } catch (_) {
       return isoDate;
     }
@@ -116,6 +115,6 @@ class CsvExportService {
   String _formatDateForFile() {
     final now = DateTime.now();
     return '${now.year}${now.month.toString().padLeft(2, '0')}'
-           '${now.day.toString().padLeft(2, '0')}';
+        '${now.day.toString().padLeft(2, '0')}';
   }
 }

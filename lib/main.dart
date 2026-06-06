@@ -50,23 +50,18 @@ class FeedbackApp extends StatelessWidget {
         BlocProvider<AuthBloc>(
           create: (_) => AuthBloc(),
         ),
-
         BlocProvider<FeedbackCubit>(
           create: (_) => FeedbackCubit(),
         ),
-
         BlocProvider<UserDetailsBloc>(
           create: (_) => UserDetailsBloc(),
         ),
-
         BlocProvider<BugBloc>(
           create: (_) => BugBloc(),
         ),
-
         BlocProvider<MediaBloc>(
           create: (_) => MediaBloc(),
         ),
-
         BlocProvider<ExportBloc>(
           create: (_) => ExportBloc(
             csvExportService: GetIt.instance<CsvExportService>(),
